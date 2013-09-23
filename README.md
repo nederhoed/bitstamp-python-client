@@ -3,6 +3,8 @@ bitstamp-python-client
 
 Python package to communicate with bitstamp.net API
 
+RRN: be sure to check if the author updates the repo before October 30th due to changes in the API https://bitcointalk.org/index.php?topic=38711.msg3218202#msg3218202
+
 ## Overview ##
 
 There are two classes. One for public part of API and second for trading part.
