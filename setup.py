@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(
-    name='BitstampClient',
+    name='bitstamp-python-client',
     version='0.1',
     packages=['bitstamp'],
     url='',
