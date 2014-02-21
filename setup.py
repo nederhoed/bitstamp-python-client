@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='BitstampClient',
-    version='1',
+    version='0.1',
     packages=['bitstamp'],
     url='',
     license='MIT',

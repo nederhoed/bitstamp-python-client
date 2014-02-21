@@ -58,6 +58,11 @@ account_balance = bs_client_trading.account_balance()
 
 ## 159bihAxJTKNsJSvCxYgAHKd8UX7kJugUQ ##
 
+### NOTE: THIS IS A FORK ###
+
+This fork is maintained by Bitmymoney to avoid unpleasant surprise updates,
+if you want to use this code we advise to use the original product instead!
+
 
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kmadac/bitstamp-python-client/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
