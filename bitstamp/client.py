@@ -1,5 +1,8 @@
 __author__ = 'kmadac'
 
+# set to True to write debug log with each API call to /tmp/xwrap_requests
+MONITOR = False
+
 import requests
 import datetime
 import time
@@ -7,6 +10,26 @@ from email.utils import formatdate
 import hmac
 import hashlib
 import sys
+
+# some code to monitor traffic a bit...
+if MONITOR:
+    _org_get = requests.get
+    def get_proxy(url, *args, **kwargs):
+        open('/tmp/xwrap_requests', 'a').write(
+            '%s - %s\n' % (
+                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                url))
+        return _org_get(url, *args, **kwargs)
+    requests.get = get_proxy
+
+    _org_post = requests.post
+    def post_proxy(url, *args, **kwargs):
+        open('/tmp/xwrap_requests', 'a').write(
+            '%s - %s\n' % (
+                datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                url))
+        return _org_post(url, *args, **kwargs)
+    requests.post = post_proxy
 
 class JSONError(Exception):
     """Raised when JSON could not be decoded
