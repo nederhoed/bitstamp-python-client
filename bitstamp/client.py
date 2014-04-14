@@ -1,7 +1,9 @@
 __author__ = 'kmadac'
 
 import requests
+import datetime
 import time
+from email.utils import formatdate
 import hmac
 import hashlib
 import sys
@@ -17,6 +19,16 @@ def get_json_data(request):
         return request.json()
     raise JSONError(request.content)
 
+def nocache_headers():
+    now = datetime.datetime.now()
+    rfc822dt = formatdate(time.mktime(now.timetuple()))
+    return {
+        'Cache-Control': 'no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'If-Modified-Since': rfc822dt,
+        'Expires': 0,
+    }
+
 class public():
     def __init__(self, proxydict=None):
         self.proxydict = proxydict
@@ -25,7 +37,8 @@ class public():
         """Return ticker information
         """
         r = requests.get(
-            "https://www.bitstamp.net/api/ticker/", proxies=self.proxydict)
+            "https://www.bitstamp.net/api/ticker/", proxies=self.proxydict,
+            headers=nocache_headers())
         return get_json_data(r)
 
     def order_book(self, group=True):
@@ -38,7 +51,8 @@ class public():
 
         r = requests.get(
             "https://www.bitstamp.net/api/order_book/",
-            params=params, proxies=self.proxydict)
+            params=params, proxies=self.proxydict,
+            headers=nocache_headers())
         return get_json_data(r)
 
     def transactions(self, timedelta_secs=86400):
@@ -48,7 +62,8 @@ class public():
 
         r = requests.get(
             "https://www.bitstamp.net/api/transactions/",
-            params=params, proxies=self.proxydict)
+            params=params, proxies=self.proxydict,
+            headers=nocache_headers())
         return get_json_data(r)
 
     def bitinstant_reserves(self):
@@ -58,7 +73,7 @@ class public():
         """
         r = requests.get(
             "https://www.bitstamp.net/api/bitinstant/",
-            proxies=self.proxydict)
+            proxies=self.proxydict, headers=nocache_headers())
         return get_json_data(r)
 
     def conversion_rate_usd_eur(self):
@@ -70,7 +85,7 @@ class public():
         """
         r = requests.get(
             "https://www.bitstamp.net/api/eur_usd/",
-            proxies=self.proxydict)
+            proxies=self.proxydict, headers=nocache_headers())
         return get_json_data(r)
 
 
