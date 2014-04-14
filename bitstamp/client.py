@@ -1,7 +1,7 @@
 __author__ = 'kmadac'
 
 # set to True to write debug log with each API call to /tmp/xwrap_requests
-MONITOR = False
+MONITOR = True
 
 import requests
 import datetime
@@ -43,12 +43,9 @@ def get_json_data(request):
     raise JSONError(request.content)
 
 def nocache_headers():
-    now = datetime.datetime.now()
-    rfc822dt = formatdate(time.mktime(now.timetuple()))
     return {
         'Cache-Control': 'no-cache, must-revalidate',
         'Pragma': 'no-cache',
-        'If-Modified-Since': rfc822dt,
         'Expires': 0,
     }
 
