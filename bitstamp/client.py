@@ -1,7 +1,7 @@
 __author__ = 'kmadac'
 
 # set to True to write debug log with each API call to /tmp/xwrap_requests
-MONITOR = True
+MONITOR = False
 
 import requests
 import datetime
