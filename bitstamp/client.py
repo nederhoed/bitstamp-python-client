@@ -49,7 +49,7 @@ def nocache_headers():
         'Expires': 0,
     }
 
-class public():
+class public(object):
     def __init__(self, proxydict=None):
         self.proxydict = proxydict
 
@@ -109,7 +109,7 @@ class public():
         return get_json_data(r)
 
 
-class trading():
+class trading(object):
     def __init__(self, username, key, secret, proxydict=None):
         self.proxydict = proxydict
         self.username = username
