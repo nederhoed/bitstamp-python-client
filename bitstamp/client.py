@@ -115,6 +115,9 @@ class public(object):
 
 
 class trading(object):
+    timeout = 30
+    action_timeout = 90
+
     def __init__(self, username, key, secret, proxydict=None):
         self.proxydict = proxydict
         self.username = username
