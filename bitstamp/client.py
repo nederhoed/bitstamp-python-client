@@ -50,6 +50,9 @@ def nocache_headers():
     }
 
 class public(object):
+    timeout = 30
+    action_timeout = 90
+
     def __init__(self, proxydict=None):
         self.proxydict = proxydict
 
@@ -58,7 +61,7 @@ class public(object):
         """
         r = requests.get(
             "https://www.bitstamp.net/api/ticker/", proxies=self.proxydict,
-            headers=nocache_headers())
+            headers=nocache_headers(), timeout=self.timeout)
         return get_json_data(r)
 
     def order_book(self, group=True):
@@ -72,7 +75,7 @@ class public(object):
         r = requests.get(
             "https://www.bitstamp.net/api/order_book/",
             params=params, proxies=self.proxydict,
-            headers=nocache_headers())
+            headers=nocache_headers(), timeout=self.timeout)
         return get_json_data(r)
 
     def transactions(self, timedelta_secs=86400):
@@ -83,29 +86,31 @@ class public(object):
         r = requests.get(
             "https://www.bitstamp.net/api/transactions/",
             params=params, proxies=self.proxydict,
-            headers=nocache_headers())
+            headers=nocache_headers(), timeout=self.timeout)
         return get_json_data(r)
 
     def bitinstant_reserves(self):
         """Bitinstant USD reserves
-        
+
         Returns simple dictionary {'usd': 'Bitinstant USD reserves'}
         """
         r = requests.get(
             "https://www.bitstamp.net/api/bitinstant/",
-            proxies=self.proxydict, headers=nocache_headers())
+            proxies=self.proxydict, headers=nocache_headers(),
+            timeout=self.timeout)
         return get_json_data(r)
 
     def conversion_rate_usd_eur(self):
         """Conversion rate from USD to EUR
-        
+
         Returns simple dictionary
-        
+
         {'buy': 'buy conversion rate', 'sell': 'sell conversion rate'}
         """
         r = requests.get(
             "https://www.bitstamp.net/api/eur_usd/",
-            proxies=self.proxydict, headers=nocache_headers())
+            proxies=self.proxydict, headers=nocache_headers(),
+            timeout=self.timeout)
         return get_json_data(r)
 
 
@@ -116,7 +121,7 @@ class trading(object):
         self.key = key
         self.secret = secret
         self.nonce = int(time.time())
-        
+
     def get_params(self):
         params = {}
         params['key'] = self.key
@@ -151,7 +156,7 @@ class trading(object):
         params = self.get_params()
         r = requests.post(
             "https://www.bitstamp.net/api/balance/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -159,7 +164,7 @@ class trading(object):
 
     def user_transactions(self, offset=0, limit=100, descending=True):
         """Returns descending list of transactions
-        
+
         Every transaction (dictionary) contains
         {u'usd': u'-39.25',
          u'datetime': u'2013-03-26 18:49:13',
@@ -177,7 +182,7 @@ class trading(object):
 
         r = requests.post(
             "https://www.bitstamp.net/api/user_transactions/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -185,13 +190,13 @@ class trading(object):
 
     def open_orders(self):
         """Returns JSON list of open orders
-        
+
         Each order is represented as dictionary:
         """
         params = self.get_params()
         r = requests.post(
             "https://www.bitstamp.net/api/open_orders/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -207,7 +212,7 @@ class trading(object):
         params['id'] = order_id
         r = requests.post(
             "https://www.bitstamp.net/api/cancel_order/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.action_timeout)
         if r.status_code == 200:
             if r.text == u'true':
                 return True
@@ -229,7 +234,7 @@ class trading(object):
 
         r = requests.post(
             "https://www.bitstamp.net/api/buy/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.action_timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -245,12 +250,12 @@ class trading(object):
 
         r = requests.post(
             "https://www.bitstamp.net/api/sell/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.action_timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
         return data
-            
+
     def check_bitstamp_code(self, code):
         """Returns USD and BTC amount included in given bitstamp code
         """
@@ -258,7 +263,7 @@ class trading(object):
         params['code'] = code
         r = requests.post(
             "https://www.bitstamp.net/api/check_code/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -271,7 +276,7 @@ class trading(object):
         params['code'] = code
         r = requests.post(
             "https://www.bitstamp.net/api/redeem_code/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -279,13 +284,13 @@ class trading(object):
 
     def withdrawal_requests(self):
         """Returns list of withdrawal requests
-        
+
         Each request is represented as dictionary
         """
         params = self.get_params()
         r = requests.post(
             "https://www.bitstamp.net/api/withdrawal_requests/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -300,7 +305,7 @@ class trading(object):
 
         r = requests.post(
             "https://www.bitstamp.net/api/bitcoin_withdrawal/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.action_timeout)
         if r.status_code == 200:
             if r.text == u'true':
                 return True
@@ -318,7 +323,7 @@ class trading(object):
         params = self.get_params()
         r = requests.post(
             "https://www.bitstamp.net/api/bitcoin_deposit_address/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -326,7 +331,7 @@ class trading(object):
 
     def unconfirmed_bitcoin_deposits(self):
         """Returns JSON list of unconfirmed bitcoin transactions
-        
+
         Each transaction is represented as dictionary:
         amount - bitcoin amount
         address - deposit address used
@@ -335,7 +340,7 @@ class trading(object):
         params = self.get_params()
         r = requests.post(
             "https://www.bitstamp.net/api/unconfirmed_btc/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
@@ -353,7 +358,7 @@ class trading(object):
 
         r = requests.post(
             "https://www.bitstamp.net/api/ripple_withdrawal/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.action_timeout)
         if r.status_code == 200:
             if r.text == u'true':
                 return True
@@ -371,7 +376,7 @@ class trading(object):
         params = self.get_params()
         r = requests.post(
             "https://www.bitstamp.net/api/ripple_address/",
-            data=params, proxies=self.proxydict)
+            data=params, proxies=self.proxydict, timeout=self.timeout)
         data = get_json_data(r)
         if 'error' in data:
             return False, data['error']
